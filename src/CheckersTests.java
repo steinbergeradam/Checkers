@@ -9,7 +9,7 @@ import java.util.Random;
  *         (steinz08@gmail.com)
  * 
  */
-public class Checkers {
+public class CheckersTests {
 
 	private static Board b = new Board();
 	private static GamePlay gp = new GamePlay(0);
