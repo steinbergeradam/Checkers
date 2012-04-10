@@ -10,6 +10,7 @@ import java.awt.Point;
 public class Move {
 
 	private int color;
+	private String direction = "ul";
 	private Point prevPosition;
 	private Point nextPosition;
 	private Point enemyPosition;
@@ -17,6 +18,7 @@ public class Move {
 	private boolean isMadeKing = false;
 	private boolean isKing = false;
 	private boolean isEnemyKing = false;
+	private int score = 0;
 	private int counter;
 	private static int counterOfMove;
 
@@ -53,12 +55,14 @@ public class Move {
 
 	@Override
 	public String toString() {
-		return "[Move color=" + color + ", prevPosition=" + prevPosition
-				+ ", nextPosition=" + nextPosition + ", enemyPosition="
-				+ enemyPosition + ", isEnemyRemoved=" + isEnemyRemoved
-				+ ", isMadeKing=" + isMadeKing + ", isKing=" + isKing
-				+ ", isEnemyKing=" + isEnemyKing + ", counter=" + counter + "]";
-	} // end toString()
+		return "Move [color=" + color + ", direction=" + direction
+				+ ", prevPosition=" + prevPosition + ", nextPosition="
+				+ nextPosition + ", enemyPosition=" + enemyPosition
+				+ ", isEnemyRemoved=" + isEnemyRemoved + ", isMadeKing="
+				+ isMadeKing + ", isKing=" + isKing + ", isEnemyKing="
+				+ isEnemyKing + ", score=" + score + ", counter=" + counter
+				+ "]";
+	}
 
 	public int getCounter() {
 		return this.counter;
@@ -131,5 +135,21 @@ public class Move {
 	public void setEnemyKing(boolean ek) {
 		this.isEnemyKing = ek;
 	} // end setEnemyKing()
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public String getDirection() {
+		return direction;
+	}
+
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
 
 } // end class

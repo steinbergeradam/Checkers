@@ -21,145 +21,78 @@ public class AlphaBeta {
 	 * @param depth
 	 * @return
 	 */
-	public Triple<Integer, Point, String> maxValue(Board board, GamePlay game,
+	public Move AlphaBetaSearch(Board board, GamePlay game, int color,
 			int alpha, int beta, int depthLimit, int depth) {
 
-		// System.out.println("we called maxValue");
-		Point pBest = new Point();
-		String bestMove = "";
+		game.setColor(color);
 
-		if (depthLimit <= depth) {
+		if ((depthLimit <= depth) || (game.isGameOver())) {
 			int[] scores = game.getScores();
-			Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-					scores[2], pBest, bestMove);
-			return pFinal;
+			Move m = new Move(color, false, new Point(0, 0));
+			m.setScore(scores[2]);
+			return m;
+		} // end if
 
-		} else {
+		ArrayList<Piece> pieces = new ArrayList<Piece>();
+		if (color == 0)
+			pieces = game.getMovableBlackPieces(board);
+		else if (color == 1)
+			pieces = game.getMovableWhitePieces(board);
 
-			ArrayList<Piece> pieces = game.getMovableWhitePieces(board);
+		Move m1 = new Move(color, false, new Point(0, 0));
 
-			for (int i = 0; i < pieces.size(); i++) {
+		for (int i = 0; i < pieces.size(); i++) {
 
-				Point p = pieces.get(i).getPosition();
-				Piece pc = board.getPiece(p);
+			Point p = pieces.get(i).getPosition();
+			Piece pc = board.getPiece(p);
 
-				ArrayList<String> actions = game.getPieceActions(board, pc);
+			ArrayList<String> actions = game.getPieceActions(board, pc);
 
-				for (int j = 0; j < actions.size(); j++) {
+			for (int j = 0; j < actions.size(); j++) {
 
-					String action = actions.get(j);
+				String action = actions.get(j);
 
-					// place stone on the board
-					game.movePiece(board, p, action);
-					Triple<Integer, Point, String> pForminValue = this
-							.minValue(board, game, alpha, beta, depthLimit,
-									depth + 1);
+				// place stone on the board
+				game.movePiece(board, p, action);
+				m1.setDirection(action);
+				m1.setNextPosition(p);
 
-					game.undoMove(board);
+				int c = this.enemyColor(color);
+				Move m2 = this.AlphaBetaSearch(board, game, c, -beta, -alpha,
+						depthLimit, depth + 1);
+				m2.setNextPosition(p);
+				m2.setScore(-1 * m2.getScore());
+				int value = m2.getScore();
 
-					if (pForminValue.getLeft() > alpha) {
-						alpha = pForminValue.getLeft();
-						pBest = p;
-						bestMove = action;
+				m1.setScore(value);
 
-						if (alpha >= beta) {
-							Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-									alpha, pBest, bestMove);
-							return pFinal;
-						} // end if
-					} // end if
+				if (value > alpha)
+					alpha = value;
 
-				} // end for
+				game.undoMove(board);
+
+				if (value >= beta) {
+					m1.setScore(beta);
+					return m1;
+				}
 
 			} // end for
 
-			Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-					alpha, pBest, bestMove);
-			return pFinal;
+		} // end for
 
-		} // end if
+		m1.setScore(alpha);
+		return m1;
 
-	} // end maxValue()
+	} // end AlphaBeta()
 
-	public Triple<Integer, Point, String> minValue(Board board, GamePlay game,
-			int alpha, int beta, int depthLimit, int depth) {
-
-		// System.out.println("we called minValue");
-		Point pBest = new Point();
-		String bestMove = "";
-
-		if (depthLimit <= depth) {
-			int[] scores = game.getScores();
-			Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-					scores[2], pBest, bestMove);
-			return pFinal;
-		} else {
-
-			ArrayList<Piece> pieces = game.getMovableBlackPieces(board);
-
-			for (int i = 0; i < pieces.size(); i++) {
-
-				Point p = pieces.get(i).getPosition();
-				Piece pc = board.getPiece(p);
-
-				ArrayList<String> actions = game.getPieceActions(board, pc);
-
-				for (int j = 0; j < actions.size(); j++) {
-
-					String action = actions.get(j);
-
-					// place stone on the board
-					game.movePiece(board, p, action);
-
-					Triple<Integer, Point, String> pForminValue = this
-							.maxValue(board, game, alpha, beta, depthLimit,
-									depth + 1);
-
-					game.undoMove(board);
-
-					if (pForminValue.getLeft() < beta) {
-						beta = pForminValue.getLeft();
-						pBest = pForminValue.getCenter();
-						bestMove = pForminValue.getRight();
-						if (alpha >= beta) {
-							Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-									beta, pBest, bestMove);
-							return pFinal;
-						} // end if
-					} // end if
-
-				} // end for
-
-			} // end for
-
-			Triple<Integer, Point, String> pFinal = new Triple<Integer, Point, String>(
-					beta, pBest, bestMove);
-			return pFinal;
-
-		} // end if
-
-	} // end minValue()
-
-	public Pair<Point, String> AlphaBetaSearch(Board board, int player,
-			GamePlay game, int depthLimit) {
-
-		// min's turn black
-		if (player == 0) {
-			Triple<Integer, Point, String> triple = this.minValue(board, game,
-					Integer.MIN_VALUE, Integer.MAX_VALUE, depthLimit, 0);
-			return new Pair<Point, String>(triple.getCenter(),
-					triple.getRight());
-		} // end if
-
-		// max's turn White
-		else {
-			Triple<Integer, Point, String> triple = this.maxValue(board, game,
-					Integer.MIN_VALUE, Integer.MAX_VALUE, depthLimit, 0);
-			return new Pair<Point, String>(triple.getCenter(),
-					triple.getRight());
-		} // end if
-
-	} // end AlphaBetaSearch()
+	public int enemyColor(int c) {
+		int result = -1;
+		if (c == 0)
+			result = 1;
+		else if (c == 1)
+			result = 0;
+		return result;
+	} // end enemyColor()
 
 } // end class
 

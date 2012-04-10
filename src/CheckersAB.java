@@ -13,7 +13,6 @@ public class CheckersAB {
 
 	private static Board b = new Board();
 	private static GamePlay gp = new GamePlay(0);
-	private static Random random = new Random(System.currentTimeMillis());
 
 	public static void main(String[] args) {
 
@@ -21,175 +20,35 @@ public class CheckersAB {
 		gp = new GamePlay(0);
 
 		int index = -1;
-		int moves = 0;
+		int moves = -1;
 
 		AlphaBeta ab = new AlphaBeta();
-
-		// for (int i = 0; i < 250; i++) {
-		//
-		// if ((b.getBlackPieces().isEmpty())
-		// || (b.getWhitePieces().isEmpty()))
-		// break;
-		//
-		// int color = gp.getColor();
-		// ArrayList<Piece> pieces = new ArrayList<Piece>();
-		// int randIndex = 0;
-		// Piece piece = new Piece(0);
-		// Point position = new Point(0, 0);
-		// ArrayList<String> actions = new ArrayList<String>();
-		// String action = "ul";
-		// // Pair<Point, String> move = ab.AlphaBetaSearch(b, color, gp,
-		// // 10);
-		// // Point position = move.getLeft();
-		// // String action = move.getRight();
-		// // b = makeMove(index, b, position, action);
-		// // moves++;
-		//
-		// if (color == 0) {
-		//
-		// index++;
-		// pieces = gp.getJumpableBlackPieces(b);
-		//
-		// if (!pieces.isEmpty()) {
-		//
-		// randIndex = random.nextInt(pieces.size());
-		// piece = pieces.get(randIndex);
-		//
-		// actions = gp.getPieceJumps(b, piece);
-		// randIndex = random.nextInt(actions.size());
-		// action = actions.get(randIndex);
-		// b = makeMove(index, b, position, action);
-		// moves++;
-		//
-		// } else {
-		//
-		// pieces = gp.getMovableBlackPieces(b);
-		//
-		// if (!pieces.isEmpty()) {
-		// randIndex = random.nextInt(pieces.size());
-		// piece = pieces.get(randIndex);
-		// position = piece.getPosition();
-		// actions = gp.getPieceActions(b, piece);
-		// randIndex = random.nextInt(actions.size());
-		// action = actions.get(randIndex);
-		// b = makeMove(index, b, position, action);
-		// moves++;
-		// } // end if
-		//
-		// } // end if
-		//
-		// } else {
-		//
-		// index++;
-		// pieces = gp.getJumpableWhitePieces(b);
-		//
-		// if (!pieces.isEmpty()) {
-		//
-		// randIndex = random.nextInt(pieces.size());
-		// piece = pieces.get(randIndex);
-		// position = piece.getPosition();
-		// actions = gp.getPieceJumps(b, piece);
-		// randIndex = random.nextInt(actions.size());
-		// action = actions.get(randIndex);
-		// b = makeMove(index, b, position, action);
-		// moves++;
-		//
-		// } else {
-		//
-		// pieces = gp.getMovableWhitePieces(b);
-		//
-		// if (!pieces.isEmpty()) {
-		// randIndex = random.nextInt(pieces.size());
-		// piece = pieces.get(randIndex);
-		// position = piece.getPosition();
-		// actions = gp.getPieceActions(b, piece);
-		// randIndex = random.nextInt(actions.size());
-		// action = actions.get(randIndex);
-		// b = makeMove(index, b, position, action);
-		// moves++;
-		// } // end if
-		//
-		// } // end if
-		//
-		// } // end if
-		//
-		// } // end for
+		int color = 0;
 
 		for (int i = 0; i < 250; i++) {
+
+			gp.setColor(color);
 
 			if ((b.getBlackPieces().isEmpty())
 					|| (b.getWhitePieces().isEmpty()))
 				break;
 
-			int color = gp.getColor();
-			ArrayList<Piece> pieces = new ArrayList<Piece>();
-			int randIndex = 0;
-			Piece piece = new Piece(0);
-			Point position = new Point(0, 0);
-			ArrayList<String> actions = new ArrayList<String>();
-			String action = "ul";
+			index++;
+			moves++;
+			Move m = ab.AlphaBetaSearch(b, gp, color, Integer.MIN_VALUE,
+					Integer.MAX_VALUE, 12, 0);
 
-			if (color == 0) {
+			Point p = m.getNextPosition();
+			String d = m.getDirection();
+			System.out.println(p);
+			System.out.println(d);
+			b = makeMove(index, b, p, d);
 
-				index++;
-				pieces = gp.getJumpableBlackPieces(b);
+			color = enemyColor(color);
 
-				if (!pieces.isEmpty()) {
-
-					randIndex = random.nextInt(pieces.size());
-					piece = pieces.get(randIndex);
-					position = piece.getPosition();
-					actions = gp.getPieceJumps(b, piece);
-					randIndex = random.nextInt(actions.size());
-					action = actions.get(randIndex);
-					b = makeMove(index, b, position, action);
-					moves++;
-
-				} else {
-
-					pieces = gp.getMovableBlackPieces(b);
-					randIndex = random.nextInt(pieces.size());
-					piece = pieces.get(randIndex);
-					position = piece.getPosition();
-					actions = gp.getPieceActions(b, piece);
-					randIndex = random.nextInt(actions.size());
-					action = actions.get(randIndex);
-					b = makeMove(index, b, position, action);
-					moves++;
-
-				} // end if
-
-			} else {
-
-				index++;
-				pieces = gp.getJumpableWhitePieces(b);
-
-				if (!pieces.isEmpty()) {
-
-					randIndex = random.nextInt(pieces.size());
-					piece = pieces.get(randIndex);
-					position = piece.getPosition();
-					actions = gp.getPieceJumps(b, piece);
-					randIndex = random.nextInt(actions.size());
-					action = actions.get(randIndex);
-					b = makeMove(index, b, position, action);
-					moves++;
-
-				} else {
-
-					pieces = gp.getMovableWhitePieces(b);
-					randIndex = random.nextInt(pieces.size());
-					piece = pieces.get(randIndex);
-					position = piece.getPosition();
-					actions = gp.getPieceActions(b, piece);
-					randIndex = random.nextInt(actions.size());
-					action = actions.get(randIndex);
-					b = makeMove(index, b, position, action);
-					moves++;
-
-				} // end if
-
-			} // end if
+			// position = move.getLeft();
+			// action = move.getRight();
+			// b = makeMove(index, b, position, action);
 
 		} // end for
 
@@ -199,6 +58,15 @@ public class CheckersAB {
 		} // end for
 
 	} // end main()
+
+	public static int enemyColor(int c) {
+		int result = -1;
+		if (c == 0)
+			result = 1;
+		else if (c == 1)
+			result = 0;
+		return result;
+	} // end enemyColor()
 
 	/**
 	 * Undo last move on the game board.

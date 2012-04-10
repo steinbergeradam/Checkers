@@ -815,6 +815,17 @@ public class GamePlay {
 		this.color = c;
 	} // end setColor()
 
+	public void updateGameOver(Board b) {
+		this.updateScores(b);
+		ArrayList<Piece> jumpableBlack = this.getJumpableBlackPieces(b);
+		ArrayList<Piece> movableBlack = this.getMovableBlackPieces(b);
+		ArrayList<Piece> jumpableWhite = this.getJumpableWhitePieces(b);
+		ArrayList<Piece> movableWhite = this.getMovableWhitePieces(b);
+		if (((jumpableBlack.isEmpty()) && (movableBlack.isEmpty()))
+				|| ((jumpableWhite.isEmpty()) && (movableWhite.isEmpty())))
+			this.gameOver = true;
+	} // end updateGameOver()
+
 	public boolean isGameOver() {
 		return this.gameOver;
 	} // end isGameOver()
